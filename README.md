@@ -1,36 +1,43 @@
-Role Name
+haproxy-pg
 =========
 
-A brief description of the role goes here.
+This roles adds settings for postgres to exist haproxy config or creates new haproxy instance.
 
 Requirements
 ------------
 
-Any pre-requisites that may not be covered by Ansible itself or the role should be mentioned here. For instance, if the role uses the EC2 module, it may be a good idea to mention in this section that the boto package is required.
+This role isn't depend on other role.
 
 Role Variables
 --------------
 
-A description of the settable variables for this role should go here, including any variables that are in defaults/main.yml, vars/main.yml, and any variables that can/should be set via parameters to the role. Any variables that are read from other roles and/or the global scope (ie. hostvars, group vars, etc.) should be mentioned here as well.
+
 
 Dependencies
 ------------
 
-A list of other roles hosted on Galaxy should go here, plus any details in regards to parameters that may need to be set for other roles, or variables that are used from other roles.
+This role is optionally dependency for postgres role for many projects. But it is used as independent role.
 
 Example Playbook
 ----------------
 
 Including an example of how to use your role (for instance, with variables passed in as parameters) is always nice for users too:
 
-    - hosts: servers
-      roles:
-         - { role: username.rolename, x: 42 }
+```
+- hosts: postgres
+  roles:
+    - role: postgres
+
+- hosts: pgproxy
+  roles:
+    - role: haproxy-pg
+	- role: pgbouncer
+```
 
 License
 -------
 
-BSD
+GPLv2
 
 Author Information
 ------------------
