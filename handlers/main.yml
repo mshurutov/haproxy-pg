@@ -1,2 +1,34 @@
 ---
+
 # handlers file for haproxy-pg
+- name: haproxy enable
+  ansible.builtin.service:
+    name: haproxy
+    enabled: yes
+
+- name: haproxy start
+  ansible.builtin.service:
+    name: haproxy
+    state: started
+    enabled: yes
+
+- name: haproxy stop
+  ansible.builtin.service:
+    name: haproxy
+    state: stopped
+
+- name: haproxy restart
+  ansible.builtin.service:
+    name: haproxy
+    state: restarted
+
+- name: haproxy reload
+  ansible.builtin.service:
+    name: haproxy
+    state: reloaded
+
+- name: haproxy disable
+  ansible.builtin.service:
+    name: haproxy
+    enabled: no
+

@@ -1,2 +1,38 @@
 ---
+
 # tasks file for haproxy-pg
+- name: install haproxy package(s) if needed
+  ansible.builtin.import_tasks: "{{ ansible_pkg_mgr }}-install.yml"
+  tags: haproxy_install
+
+- name: check if exists haproxy.cfg
+  ansible.builtin.stat:
+    path: "{{ haproxy_cfg_file }}"
+  register: haproxy_cfg_exists
+  tags: haproxy_cfg
+- name: configure haproxy for pg
+  block:
+    - name: create new config for clean installation
+      ansible.builtin.template:
+        src: "{{ haproxy_templates_dir }}/haproxy-pg.cfg.j2"
+        dest: "{{ haproxy_cfg_file }}"
+        owner: '{{ haproxy_user }}'
+        group: '{{ haproxy_group }}'
+      when: not haproxy_cfg_exists.exists
+    - name: add pg section into exists file
+      ansible.builtin.blockinfile:
+        path: "{{ haproxy_cfg_file }}"
+        block: |
+          # do not edit this block manually
+          listen postgres_{{ item.connect_type }}
+            bind *:{{ item.bind_port }}
+            option {{ item.check_option }} # by default 'httpchk GET /master'
+            http-check expect status 200
+            default-server inter 3s fastinter 1s fall 2 rise 2 on-marked-down shutdown-sessions
+            {% for pgh in groups[pg_hosts_group] %}
+            server {{ pgh.ansible_nodename }} {{ pgh.ansible_fqdn }}:{{ postgres_client_port }} maxconn {{ item.pg_max_conn }} check port {{ item.check_pg_port }}
+            {% endfor %}
+      loop: "{{ haproxy_pg_clusters }}"
+      when: haproxy_cfg_exists.exists
+  notfy: haproxy restart
+  tags: haproxy_cfg

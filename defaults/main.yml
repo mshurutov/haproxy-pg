@@ -1,2 +1,41 @@
 ---
+
 # defaults file for haproxy-pg
+# pathnames to files and directories
+haproxy_packages: 'haproxy'
+haproxy_templates_dir: '{{ role_path }}/templates'
+haproxy_cfg_dir: '/etc/haproxy'
+haproxy_cfg_file: '{{ haproxy_cfg_dir }}/haproxy.cfg'
+haproxy_user: 'haproxy'
+haproxy_group: '{{ haproxy_user }}'
+
+# configuration variables
+# any variables
+haproxy_max_global_connections: 500
+haproxy_retries_default: 3
+haproxy_timeout_client: '30m'
+haproxy_timeout_connect: '4s'
+haproxy_timeout_server: '30m'
+haproxy_timeout_check: '5s'
+haproxy_stats_port: 7000
+haproxy_stats_uri: '/'
+# for pg
+haproxy_pg_max_conn: 100
+haproxy_check_pg_port: 8008
+haproxy_pg_port: 5432
+haproxy_pg_check_options: 'httpchk GET /master'
+# default is read/write definition
+haproxy_pg_clusters:
+  - connect_type: 'rw'
+    bind_port: '{{ haproxy_pg_port }}'
+    check_option: '{{ haproxy_pg_check_options }}'
+    check_pg_port: '{{ haproxy_check_pg_port }}'
+    pg_max_conn: '{{ haproxy_pg_max_conn }}'
+
+# Distro-depended variables
+# apt (Deb-like/based: Debian,Ubuntu,etc)
+haproxy_apt_packages: "{{ haproxy_packages }}"
+# yum/dnf (RedHat-like/based: RedHat, CentOS7, Oracle, etc)
+haproxy_yum_packages: "{{ haproxy_packages }}"
+# portage (Gentoo Linux)
+haproxy_portage_packages: "{{ haproxy_packages }}"

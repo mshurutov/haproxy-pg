@@ -1,0 +1,29 @@
+# File {{ haproxy_cfg_file }} is managed by ansible
+# you shouldn't edit it manually.
+global
+ maxconn {{ haproxy_max_global_connections }}
+
+defaults
+ log global
+ mode tcp
+ retries {{ haproxy_retries_default }}
+ timeout client {{ haproxy_timeout_client }}
+ timeout connect {{ haproxy_timeout_connect }}
+ timeout server {{ haproxy_timeout_server }} 30m
+ timeout check {{ haproxy_timeout_check }} 5s
+
+listen stats
+ mode http
+ bind *:{{ haproxy_stats_port }}
+ stats enable
+ stats uri {{ haproxy_stats_uri }} /
+
+listen postgres
+ bind *: {{ haproxy_pg_port }}
+ option {{ haproxy_pg_check_options }}
+ http-check expect status 200
+ default-server inter 3s fastinter 1s fall 2 rise 2 on-marked-down shutdown-sessions
+{% for pgh in groups[pg_hosts_group] %}
+ server {{ pgh.ansible_nodename }} {{ pgh.ansible_fqdn }}:{{ postgres_client_port }} maxconn {{ haproxy_pg_max_conn }} check port {{ haproxy_check_pg_port }}
+{% endfor %}
+

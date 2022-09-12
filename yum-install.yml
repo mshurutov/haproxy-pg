@@ -1,0 +1,9 @@
+---
+
+# Install haproxy package(s) on old RedHat-based/like distros (RedHat 7, CentOS 7, Oracle Linux 7 etc)
+- name: install necessary haproxy package(s)
+  ansible.builtin.yum:
+    name: "{{ haproxy_yum_packages }}"
+    state: present
+
+

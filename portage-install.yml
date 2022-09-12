@@ -1,0 +1,9 @@
+---
+
+# Install haproxy package(s) on Gentoo Linux
+- name: install necessary haproxy package(s)
+  community.general.portage:
+    name: "{{ haproxy_apt_packages }}"
+    state: present
+
+
