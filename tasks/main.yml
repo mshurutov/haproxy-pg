@@ -19,6 +19,7 @@
         owner: '{{ haproxy_user }}'
         group: '{{ haproxy_group }}'
       when: not haproxy_cfg_exists.exists
+      notify: haproxy restart
     - name: add pg section into exists file
       ansible.builtin.blockinfile:
         path: "{{ haproxy_cfg_file }}"
@@ -34,5 +35,5 @@
             {% endfor %}
       loop: "{{ haproxy_pg_clusters }}"
       when: haproxy_cfg_exists.exists
-  notfy: haproxy restart
+      notify: haproxy restart
   tags: haproxy_cfg
