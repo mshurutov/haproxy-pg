@@ -1,29 +1,22 @@
 # File {{ haproxy_cfg_file }} is managed by ansible
 # you shouldn't edit it manually.
-global
- maxconn {{ haproxy_max_global_connections }}
+{% for section in haproxy_params %}
+{{ section.name | regex_replace("^[0-9]+_") }}
+{% for pname,pvalue in section.options.items() %}
+  {{ pname | regex_replace("_"," ") }} {{ pvalue }}
+{% endfor %}
 
-defaults
- log global
- mode tcp
- retries {{ haproxy_retries_default }}
- timeout client {{ haproxy_timeout_client }}
- timeout connect {{ haproxy_timeout_connect }}
- timeout server {{ haproxy_timeout_server }} 30m
- timeout check {{ haproxy_timeout_check }} 5s
+{% endfor %}
+# Settings for postgres proxy
+{% for pgcl in haproxy_pg_clusters %}
+listen postgres_{{ pgcl.connect_type }}
+  bind *:{{ pgcl.bind_port }}
+  option {{ pgcl.check_option }}
+  http-check expect status 200
+  default-server inter 3s fastinter 1s fall 2 rise 2 on-marked-down shutdown-sessions
+{% for pgh in groups[postgres_hosts_group] %}
+  server {{ hostvars[pgh]['inventory_hostname'] }} {{ hostvars[pgh]['ansible_host'] }}:{{ postgres_client_port }} maxconn {{ pgcl.pg_max_conn }} check port {{ pgcl.check_pg_port }}
+{% endfor %}
 
-listen stats
- mode http
- bind *:{{ haproxy_stats_port }}
- stats enable
- stats uri {{ haproxy_stats_uri }} /
-
-listen postgres
- bind *: {{ haproxy_pg_port }}
- option {{ haproxy_pg_check_options }}
- http-check expect status 200
- default-server inter 3s fastinter 1s fall 2 rise 2 on-marked-down shutdown-sessions
-{% for pgh in groups[pg_hosts_group] %}
- server {{ pgh.ansible_nodename }} {{ pgh.ansible_fqdn }}:{{ postgres_client_port }} maxconn {{ haproxy_pg_max_conn }} check port {{ haproxy_check_pg_port }}
 {% endfor %}
 

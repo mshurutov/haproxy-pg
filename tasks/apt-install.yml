@@ -5,4 +5,5 @@
   ansible.builtin.apt:
     name: "{{ haproxy_apt_packages }}"
     state: present
+  register: haproxy_install_result
 

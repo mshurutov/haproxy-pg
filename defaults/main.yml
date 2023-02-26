@@ -11,21 +11,33 @@ haproxy_group: '{{ haproxy_user }}'
 
 # configuration variables
 # any variables
-haproxy_max_global_connections: 500
-haproxy_retries_default: 3
-haproxy_timeout_client: '30m'
-haproxy_timeout_connect: '4s'
-haproxy_timeout_server: '30m'
-haproxy_timeout_check: '5s'
-haproxy_stats_port: 7000
-haproxy_stats_uri: '/'
+haproxy_params_default:
+  - name: "00_global"
+    options:
+      maxconn: 500
+  - name: "01_defaults"
+    options:
+      log: "global"
+      mode: "tcp"
+      retries: 3
+      timeout_client: '30m'
+      timeout_connect: '4s'
+      timeout_server: '30m'
+      timeout_check: '5s'
+  - name: "02_listen stats"
+    options:
+      mode: "http"
+      bind: "*:7000"
+      stats: "enable"
+      stats_uri: "/"
+    
 # for pg
 haproxy_pg_max_conn: 100
 haproxy_check_pg_port: 8008
 haproxy_pg_port: 5432
 haproxy_pg_check_options: 'httpchk GET /master'
 # default is read/write definition
-haproxy_pg_clusters:
+haproxy_pg_clusters_default:
   - connect_type: 'rw'
     bind_port: '{{ haproxy_pg_port }}'
     check_option: '{{ haproxy_pg_check_options }}'
