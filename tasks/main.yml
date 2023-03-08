@@ -8,7 +8,7 @@
 - name: set haproxy_pg_clusters
   ansible.builtin.set_fact:
     haproxy_pg_clusters: "{{ [haproxy_pg_clusters_default,haproxy_pg_clusters_group_all | default([]), haproxy_pg_clusters_group | default([]), haproxy_pg_clusters_host | default([])] | community.general.lists_mergeby('connect_type',recursive=true,list_merge='append_rp') }}"
-`
+
 - name: install haproxy package(s) if needed
   ansible.builtin.include_tasks: "{{ ansible_pkg_mgr }}-install.yml"
   tags: haproxy_install
