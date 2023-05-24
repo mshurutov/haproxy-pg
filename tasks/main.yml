@@ -10,7 +10,10 @@
     haproxy_pg_clusters: "{{ [haproxy_pg_clusters_default,haproxy_pg_clusters_group_all | default([]), haproxy_pg_clusters_group | default([]), haproxy_pg_clusters_host | default([])] | community.general.lists_mergeby('connect_type',recursive=true,list_merge='append_rp') }}"
 
 - name: install haproxy package(s) if needed
-  ansible.builtin.include_tasks: "{{ ansible_pkg_mgr }}-install.yml"
+  ansible.builtin.package:
+    name: "{{ haproxy_apt_packages }}"
+    state: present
+  register: haproxy_install_result
   tags: haproxy_install
 
 - name: check if exists haproxy.cfg.install

@@ -1,9 +1,0 @@
----
-
-# Install haproxy package(s) on new RedHat-based/like distros (RedHat 8, Rocky, Oracle Linux 8, etc)
-- name: install necessary haproxy package(s)
-  ansible.builtin.dnf:
-    name: "{{ haproxy_dnf_packages }}"
-    state: present
-
-

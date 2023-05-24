@@ -1,9 +1,0 @@
----
-
-# Install haproxy package(s) on Deb-based/like distros (Debian,Ubuntu,etc)
-- name: install necessary haproxy package(s)
-  ansible.builtin.apt:
-    name: "{{ haproxy_apt_packages }}"
-    state: present
-  register: haproxy_install_result
-
