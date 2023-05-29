@@ -5,5 +5,3 @@
   ansible.builtin.yum:
     name: "{{ haproxy_yum_packages }}"
     state: present
-
-

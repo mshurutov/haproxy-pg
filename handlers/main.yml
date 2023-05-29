@@ -31,4 +31,3 @@
   ansible.builtin.service:
     name: haproxy
     enabled: no
-

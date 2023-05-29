@@ -1,7 +1,10 @@
+[TOC]
+
 haproxy-pg
 =========
 
 This roles adds settings for postgres to exist haproxy config or creates new haproxy instance.
+
 Copyright (C) 2023  Mikhail Shurutov
 
 This program is free software; you can redistribute it and/or
