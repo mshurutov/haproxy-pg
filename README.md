@@ -29,28 +29,90 @@ This role isn't depend on other role.
 Role Variables
 --------------
 
+### common variables
+`haproxy_packages` is list of packages;
+`haproxy_user` is system user for haproxy service;
+`haproxy_group` is system group for haproxy service by default same as user.
 
+### pathnames to files and directories
+`haproxy_templates_dir` is directory for templates;
+`haproxy_cfg_dir` is directory for configuration;
+`haproxy_cfg_file` is configuration file.
+
+### configuration variables
+#### common variables
+Prefix "`^[0-9]{2}_`" is necessary for ordering place in config. When template of config is placed into config directroy this prefix is cutted. By default there are defined three sections: `[global]` with define `maxconn = 500` variable; `[defaults]` with define logging mode and timeout variables; `[listen stats]` with variables for output stats by HTTPs.
+
+#### postgres variables
+`haproxy_pg_max_conn` is the max connections to postgres instance;
+`haproxy_check_pg_port` is port for checking postgres instance health when using patroni cluster for postgres HA;
+`haproxy_pg_check_options` is check options for checking postgres instance health when using patroni cluster for postgres HA;
+`haproxy_pg_port` is the port what postgres is listening;
+
+#### default is read/write definition
+`haproxy_pg_clusters_default` - there is defined only one read/write cluster with minimal settings.
+
+#### Distro-depended variables
+
+Currently only package lists are defined for each package manager.
 
 Dependencies
 ------------
 
 This role is optionally dependency for postgres role for many projects. But it is used as independent role.
 
-Example Playbook
+Using a Role
 ----------------
 
-Including an example of how to use your role (for instance, with variables passed in as parameters) is always nice for users too:
+### Variables Used
 
+* `ANSIBLE_ROOT_DIR` is path for static content: roles,configs,etc, for example: /data/ansible
+* `ANSIBLE_ROOT_ROLE_DIR` is path in `roles_path` config variable, for example: /data/ansible/roles  
+Content of my ~/.ansible.cfg:
 ```
-- hosts: postgres
-  roles:
-    - role: postgres
+...
+# additional paths to search for roles in, colon separated
+#roles_path    = /etc/ansible/roles
+roles_path    = /data/ansible/roles
+...
+```
 
-- hosts: pgproxy
-  roles:
-    - role: haproxy-pg
-	- role: pgbouncer
-```
+### Install role
+#### GIT repo
+
+    user@host ~ $ cd $ANSIBLE_ROOT_ROLE_DIR
+    user@host roles $ git clone https://shurutov@git.code.sf.net/p/haproxy-pg/code haproxy_pg
+
+#### Ansible galaxy
+##### Installation from command
+
+    user@host ~ $ cd $ANSIBLE_ROOT_DIR
+    user@host ansible $ ansible-galaxy role install mshurutov.haproxy_pg -p roles
+
+##### Installation from requirements.yml
+
+    user@host ~ $ cd $ANSIBLE_ROOT_DIR
+    user@host ansible $ grep haproxy_pg requirements.yml
+    - name: mshurutov.haproxy_pg
+    user@host ansible $ ansible-galaxy role install -r requirements.yml -p roles
+
+### Example Playbook
+
+#### Role installed as git repo
+
+    ...
+    - hosts: haproxy_pg_group
+      roles:
+         - role: haproxy_pg
+    ...
+
+#### Role installed by ansible-galaxy
+
+    ...
+    - hosts: haproxy_pg_group
+      roles:
+         - role: mshurutov.haproxy_pg
+    ...
 
 License
 -------
@@ -60,4 +122,4 @@ License
 Author Information
 ------------------
 
-An optional section for the role authors to include contact information, or a website (HTML is not allowed).
+My name is Mikhail Shurutov, I'm an operations engineer since 1997.

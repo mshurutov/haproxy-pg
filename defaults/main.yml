@@ -33,8 +33,8 @@ haproxy_params_default:
     
 # for pg
 haproxy_pg_max_conn: 100
-haproxy_check_pg_port: 8008
 haproxy_pg_port: 5432
+haproxy_check_pg_port: 8008
 haproxy_pg_check_options: 'httpchk GET /master'
 # default is read/write definition
 haproxy_pg_clusters_default:
