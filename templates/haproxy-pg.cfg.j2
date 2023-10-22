@@ -15,7 +15,7 @@ listen postgres_{{ pgcl.connect_type }}
   http-check expect status 200
   default-server inter 3s fastinter 1s fall 2 rise 2 on-marked-down shutdown-sessions
 {% for pgh in groups[postgres_hosts_group] %}
-  server {{ hostvars[pgh]['common_short_hostname'] }} {{ hostvars[pgh]['common_full_hostname'] }}:{{ postgres_client_port }} maxconn {{ pgcl.pg_max_conn }} check port {{ pgcl.check_pg_port }}
+  server {{ hostvars[pgh]['common_short_hostname'] }} {{ hostvars[pgh]['common_full_hostname'] }}:{{ pgcl.haproxy_pg_client_port }} maxconn {{ pgcl.pg_max_conn }} check port {{ pgcl.check_pg_port }}
 {% endfor %}
 
 {% endfor %}
