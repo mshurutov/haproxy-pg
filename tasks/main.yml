@@ -1,26 +1,23 @@
 ---
 
 # tasks file for haproxy-pg
-# set any lsit of dictionary variables
-- name: set haproxy_params
-  ansible.builtin.set_fact:
-    haproxy_params: "{{ [haproxy_params_default,haproxy_params_group_all | default([]),haproxy_params_group | default([]),haproxy_params_host | default([])] | community.general.lists_mergeby('name',recursive=true,list_merge='append_rp') }}"
-- name: set haproxy_pg_clusters
-  ansible.builtin.set_fact:
-    haproxy_pg_clusters: "{{ [haproxy_pg_clusters_default,haproxy_pg_clusters_group_all | default([]), haproxy_pg_clusters_group | default([]), haproxy_pg_clusters_host | default([])] | community.general.lists_mergeby('connect_type',recursive=true,list_merge='append_rp') }}"
+- name: set distro independed variables
+  ansible.builtin.include_vars:
+    file: "{{ haproxy_vars_dir }}/main.yml"
+  tags: haproxy,haproxy_install,haproxy_cfg
 
 - name: install haproxy package(s) if needed
   ansible.builtin.package:
     name: "{{ haproxy_apt_packages }}"
     state: present
   register: haproxy_install_result
-  tags: haproxy_install
+  tags: haproxy,haproxy_install
 
 - name: check if exists haproxy.cfg.install
   ansible.builtin.stat:
     path: "{{ haproxy_cfg_file }}.install"
   register: haproxy_cfg_install
-  tags: haproxy_cfg
+  tags: haproxy,haproxy_cfg
 
 - name: create backup of installed config 
   ansible.builtin.copy:
@@ -28,7 +25,7 @@
     dest: "{{ haproxy_cfg_file }}.install"
     remote_src: true
   when: not haproxy_cfg_install.stat.exists and haproxy_install_result.changed
-  tags: haproxy_cfg
+  tags: haproxy,haproxy_cfg
 
 - name: configure haproxy for pg
   ansible.builtin.template:
@@ -37,4 +34,4 @@
     owner: '{{ haproxy_user }}'
     group: '{{ haproxy_group }}'
   notify: haproxy restart
-  tags: haproxy_cfg
+  tags: haproxy,haproxy_cfg

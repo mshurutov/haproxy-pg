@@ -4,6 +4,7 @@
 # pathnames to files and directories
 haproxy_packages: 'haproxy'
 haproxy_templates_dir: '{{ role_path }}/templates'
+haproxy_vars_dir: '{{ role_path }}/vars'
 haproxy_cfg_dir: '/etc/haproxy'
 haproxy_cfg_file: '{{ haproxy_cfg_dir }}/haproxy.cfg'
 haproxy_user: 'haproxy'

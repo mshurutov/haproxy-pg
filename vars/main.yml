@@ -1,2 +1,23 @@
 ---
 # vars file for haproxy-pg
+# set any lsit of dictionary variables
+haproxy_params: "{{
+  [ haproxy_params_default,
+    haproxy_params_group_all | default([]),
+    haproxy_params_supgroup | default([]),
+    haproxy_params_group | default([]),
+    haproxy_params_subgroup | default([]),
+    haproxy_params_host | default([])
+  ] |
+  community.general.lists_mergeby('name',recursive=true,list_merge='append_rp')
+}}"
+haproxy_pg_clusters: "{{
+  [ haproxy_pg_clusters_default,
+    haproxy_pg_clusters_group_all | default([]),
+    haproxy_pg_clusters_supgroup | default([]),
+    haproxy_pg_clusters_group | default([]),
+    haproxy_pg_clusters_subgroup | default([]),
+    haproxy_pg_clusters_host | default([])
+  ] |
+  community.general.lists_mergeby('connect_type',recursive=true,list_merge='append_rp')
+}}"
