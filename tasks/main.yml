@@ -1,25 +1,34 @@
 ---
+- name: Check if ansible version is equal or greater than 2.11
+  ansible.builtin.fail:
+    msg: "Ansible core should be equal or greater than 2.11"
+  when: ansible_version.full is ansible.builtin.version('2.11','<')
+
+- name: Check if python is equal or greater than 3
+  ansible.builtin.fail:
+    msg: "Python should be equal or greater than 3"
+  when: ansible_python.version.major is ansible.builtin.version('3','<')
 
 # tasks file for haproxy-pg
-- name: set distro independed variables
+- name: Set distro independed variables
   ansible.builtin.include_vars:
     file: "{{ haproxy_vars_dir }}/main.yml"
   tags: haproxy,haproxy_install,haproxy_cfg
 
-- name: install haproxy package(s) if needed
+- name: Install haproxy package(s) if needed
   ansible.builtin.package:
     name: "{{ haproxy_apt_packages }}"
     state: present
   register: haproxy_install_result
   tags: haproxy,haproxy_install
 
-- name: check if exists haproxy.cfg.install
+- name: Check if exists haproxy.cfg.install
   ansible.builtin.stat:
     path: "{{ haproxy_cfg_file }}.install"
   register: haproxy_cfg_install
   tags: haproxy,haproxy_cfg
 
-- name: create backup of installed config 
+- name: Create backup of installed config 
   ansible.builtin.copy:
     src: "{{ haproxy_cfg_file }}"
     dest: "{{ haproxy_cfg_file }}.install"
@@ -27,7 +36,7 @@
   when: not haproxy_cfg_install.stat.exists and haproxy_install_result.changed
   tags: haproxy,haproxy_cfg
 
-- name: configure haproxy for pg
+- name: Configure haproxy for pg
   ansible.builtin.template:
     src: "{{ haproxy_templates_dir }}/haproxy-pg.cfg.j2"
     dest: "{{ haproxy_cfg_file }}"
