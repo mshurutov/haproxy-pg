@@ -1,5 +1,4 @@
 ---
-
 # defaults file for haproxy-pg
 # pathnames to files and directories
 haproxy_packages: 'haproxy'
@@ -31,7 +30,7 @@ haproxy_params_default:
       bind: "*:7000"
       stats: "enable"
       stats_uri: "/"
-    
+
 # for pg
 haproxy_pg_max_conn: 100
 haproxy_pg_port: 5432

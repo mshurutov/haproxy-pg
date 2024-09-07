@@ -28,10 +28,11 @@
   register: haproxy_cfg_install
   tags: haproxy,haproxy_cfg
 
-- name: Create backup of installed config 
+- name: Create backup of installed config
   ansible.builtin.copy:
     src: "{{ haproxy_cfg_file }}"
     dest: "{{ haproxy_cfg_file }}.install"
+    mode: "0644"
     remote_src: true
   when: not haproxy_cfg_install.stat.exists and haproxy_install_result.changed
   tags: haproxy,haproxy_cfg
@@ -42,5 +43,6 @@
     dest: "{{ haproxy_cfg_file }}"
     owner: '{{ haproxy_user }}'
     group: '{{ haproxy_group }}'
-  notify: haproxy restart
+    mode: "0644"
+  notify: Haproxy restart
   tags: haproxy,haproxy_cfg
